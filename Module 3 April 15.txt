@@ -1,0 +1,105 @@
+we have successfully mastered **Containerization** (Module 2) using Docker and GitHub Codespaces, 
+
+**Module 3** focuses on the next logical step in enterprise architecture: **Orchestration with Kubernetes.**
+
+How to manage dozens, hundreds, or thousands of those containers automatically.
+
+---
+
+## **Module 3: Kubernetes Orchestration & Cluster Management**
+**Topic:** Deploying and Scaling Java Microservices with Minikube
+
+### **1. Learning Objectives**
+By the end of this module, students will be able to:
+* Define the role of a **Control Plane** and **Worker Nodes**.
+* Initialize a local Kubernetes cluster using **Minikube**.
+* Create **Deployments** to manage the lifecycle of Java containers.
+* Apply **Scaling** to handle high-traffic simulations.
+
+---
+
+### **2. Theoretical Background**
+#### **Why Kubernetes? (The "Ship Captain" Analogy)**
+If Docker is a **shipping container**, Kubernetes (K8s) is the **crane and the captain** on the ship. Docker packages the code, but Kubernetes decides where it sits, what to do if a container crashes, and how to add more containers when traffic grows.
+
+
+
+#### **Key Components**
+* **Pod:** The smallest unit in K8s (holds your Docker container).
+* **Deployment:** The blueprint that tells K8s how many Pods should be running.
+* **Service:** The "Front Door" (IP address) that lets users talk to the Pods.
+
+---
+
+### **3. Practical Lab: Step-by-Step**
+
+#### **Task A: Cluster Initialization**
+Inside your **GitHub Codespace terminal** (the green prompt), we must wake up the cluster.
+1.  **Start Minikube:**
+    ```bash
+    minikube start --driver=docker
+    ```
+2.  **Verify the Cluster:**
+    ```bash
+    kubectl get nodes
+    ```
+    *"Ready" status.*
+
+#### **Task B: Pushing the Image to the Cluster**
+Kubernetes needs to "see" your Docker image. Since we built it in the cloud, we move it into the Minikube environment.
+1.  **Point Terminal to Minikube:**
+    ```bash
+    eval $(minikube docker-env)
+    ```
+2.  **Re-build the Java app inside the cluster:**
+    ```bash
+    docker build -t hangman:v3 .
+    ```
+
+#### **Task C: The Enterprise Deployment**
+Now we create a "Deployment" to run our Java Hangman app.
+1.  **Create Deployment:**
+    ```bash
+    kubectl create deployment hangman-deploy --image=hangman:v3
+    ```
+2.  **Check Pod Status:**
+    ```bash
+    kubectl get pods
+    ```
+    *Wait until STATUS is `Running`.*
+
+#### **Task D: Scaling for High Traffic**
+WM -- We will simulate a surge in users.
+1.  **Scale to 5 Replicas:**
+    ```bash
+    kubectl scale deployment hangman-deploy --replicas=5
+    ```
+2.  **Watch the Magic:**
+    ```bash
+    kubectl get pods -w
+    ```
+    *Students will watch 4 new pods being born in real-time.*
+
+---
+
+### **4. Troubleshooting Guide for Students**
+| K8s can't find the image. | run `eval $(minikube docker-env)`
+| The Java app crashed inside the pod. | Use `kubectl logs [pod-name]` 
+| `Minikube not found` | Run `minikube start`. |
+
+---
+
+### **5. Lab Exercise: Self-Healing Test**
+**The "Chaos" Challenge:**
+1.  Run `kubectl get pods` and copy the name of one running pod.
+2.  Force-delete that pod: `kubectl delete pod [pod-name]`.
+3.  Immediately run `kubectl get pods` again.
+4.  **Observation:** Kubernetes automatically created a **new** pod to replace the one you killed. **This is "Self-Healing."**
+
+---
+
+### **Summary for the Instructor**
+"In this module, we moved beyond just 'running code.' We created a self-healing, scalable system. This is exactly how the backend for **CypressWorks** or any modern banking app stays online 24/7."
+
+**Module 4 - "Services and Networking"
+ to show how to give these pods a public URL?**
