@@ -1,6 +1,6 @@
 # your docker content
-FROM node:18
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 COPY . .
-RUN npm install
-CMD ["npm","start"]
+RUN javac HangmanCMD.java
+CMD ["java", "HangmanCMD"]
